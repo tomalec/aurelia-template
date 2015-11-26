@@ -1,4 +1,3 @@
-import {DOM} from 'aurelia-pal';
 import {initialize as initializeBrowserPal} from 'aurelia-pal-browser';
 import {Container} from 'aurelia-dependency-injection';
 import {configure as configureBindingLanguage} from 'aurelia-templating-binding';
@@ -72,8 +71,7 @@ createViewResources(container);
 let viewCompiler = container.get(ViewCompiler);
 
 // create the host element and view-slot for all the tests
-let host = DOM.createElement('div');
-DOM.appendNode(host);
+let host = document.getElementById('my-element');
 let viewSlot = new ViewSlot(host, true);
 
 // creates a controller given a html template string and a viewmodel instance.
@@ -108,9 +106,7 @@ function createController(template, viewModel) {
 }
 
 
-// -----------
-  let viewModel, controller;
-// let template = `<template><div repeat.for="item of items"><input value.bind="item">\${item}</div></template>`;
+let viewModel, controller;
 var template = document.getElementById('my-template');
 viewModel = window.myData;
 /// this should be moved to binding behaviors
@@ -126,23 +122,50 @@ viewModel = window.myData;
             obj[key]++;
         }
     });
-    controller = createController(template, viewModel);
 /// --
-// validateState();
-//--
-  // viewModel.items.push('d');
 
-//--
+controller = createController(template, viewModel);
 //
 setTimeout(()=>{
   // controller.unbind();
   },3000);
-  // console.log(hasSubscribers(viewModel, 'items'), false);
-  // console.log(hasArraySubscribers(viewModel.items), false);
 
 //=======
-
-(function(){
-
-
-}())
+//
+// (function(){
+//     var AureliaTemplatePrototype = Object.create( (HTMLTemplateElement || HTMLElement ).prototype);
+//
+//
+//     AureliaTemplatePrototype.createdCallback = function(){
+//         var model = null;
+//         Object.defineProperty(this, "model",{
+//             set: function(newValue){
+//                 model = newValue;
+//                 this.attachModel(newValue);
+//             },
+//             get: function(){
+//              return model;
+//             }
+//         });
+//     };
+//     AureliaTemplatePrototype.attachedCallback = function () {
+//       this.isAttached = true;
+//
+//
+//
+//       this.controller = createController(template, viewModel);
+//       // this.loadTemplate_();
+//     };
+//     AureliaTemplatePrototype.detachedCallback = function(){
+//         this.controller.unbind();
+//
+//       this.isAttached = false;
+//       // this.clear();
+//
+//     };
+//     scope.JuicyHTMLElement = document.registerElement('aurelia-template', {
+//       prototype: AureliaTemplatePrototype,
+//       extends: "template"
+//     });
+//
+// }())
