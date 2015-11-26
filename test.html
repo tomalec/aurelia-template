@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aurelia</title>
+</head>
+
+<body>
+<button
+    onclick="debugger;this.value = !this.value || this.value=='false'"
+    value="deeper.array[0].value">
+    Click to toggle value</button>
+  <div id="my-element">Loading</div>
+  <template id="my-template">
+      <fieldset>
+          <legend>Text</legend>
+          <p>
+              <input type="text" value.bind="deeper.text" /> ${deeper.text}, with string interpolation.<br/>
+              and we can declaritively make it one-way <input type="text" value.one-way="deeper.text" />
+          </p>
+          <p>
+              <h4>other behaviors</h4>
+              We can for example debounce the binding <input type="text" value.two-way="deeper.text & debounce:500" />
+              <!-- or update on blur + paste <input value.bind="deeper.text & updateTrigger:'blur'"> -->
+              read <a href="http://www.danyow.net/aurelia-binding-behaviors/">here for more</a>
+          </p>
+      </fieldset>
+    <fieldset>
+        <legend>Button as Boolean &amp; Number</legend>
+        <h4>Boolean</h4>
+        value: ${deeper.array[0].value}<br/>
+        <button
+            click.delegate="toggle(deeper.array[0], 'value', !deeper.array[0].value)"
+            value.bind="deeper.array[0].value">
+            Click to toggle value</button>
+        <input type="checkbox" checked.bind="deeper.array[0].value">
+        <h4>Number</h4>
+        <button
+            click.delegate="increment(deeper.array[1], 'value')"
+            value.bind="deeper.array[1].value">
+            Click to increment value</button>Clicked <input type="number" value.bind="deeper.array[1].value">times.
+    </fieldset>
+      <fieldset>
+          <legend>ifs <strike>and scoping</strike></legend>
+          Show me what you got! <input type="checkbox" checked.bind="deeper.scopes.showme">
+          <!-- if.bind is for condition -->
+          <template if.bind="deeper.scopes.showme">
+              aaa<em>${deeper.scopes.conditional.data}</em>
+          </template>
+      </fieldset>
+      <fieldset>
+          <legend>safe HTML (juicy-html[inline])</legend>
+          <p innerHTML.bind="deeper.safeHTML"></p>
+      </fieldset>
+      <fieldset>
+          <legend>compose (??imported-template??)</legend>
+      </fieldset>
+      <fieldset>
+        <legend>Arrays scoping and nesting</legend>
+          <ul>
+            <template repeat.for="feature of deeper.array">
+              <li title="index:${$index}, first:${$first}, last:${$last}, even:${$even}, odd:${$odd}">${feature.name}</li>
+              <template if.bind="feature.nestedArray">
+                  <ul>
+                  <template repeat.for="nestedItem of feature.nestedArray">
+                      <li>${nestedItem.name}</li>
+                  </template>
+                  </ul>
+              </template>
+            </template>
+            Each item has <code>$parent, $index, $first, $last, $even, $odd</code> contextual values.
+            <p>
+                Fiddle with the array in console, for example, try: <br>
+                <textarea>(function(){model.array.splice(1,1); model.array[1].nestedArray[1].name = "dwa"; model.array.push({name: "and more"});})()</textarea><br>
+            </p>
+          </ul>
+      </fieldset>
+
+      <h3>Pros</h3>
+      <ul>
+          <li>So far it supports all the cases we need,</li>
+          <li>with nice declarative syntax, for bindings, and its configuration,</li>
+          <li>providea a set of features that we think about some time ago, like binding behaviors, etc.</li>
+          <li>just works, without any imperative, notifications</li>
+          <li>uses <code>HTMLTemplateElement</code> and even more bleeding edge tech than we do</li>
+          <li>author's philosophy, and ideas aligns with ours</li>
+          <li>library is under constant maintenance</li>
+          <li>have nice docs for end users</li>
+
+          <li><strong>TO BE CHECKED</strong>provides a way to choose between observing strategies</li>
+      </ul>
+      <h3>Cons</h3>
+      <ul>
+          <li>adds properties, plus setters &amp; getters to the model object - non-enumerable, so will not get into JSON, and we can always ignore them in puppet</li>
+          <li>build, and initial config process is long, unstable and complicated - hopefully we could separate and simplify it</li>
+          <li>heavily uses ES6, all of them!, then transpile it with babel - well we would like to use emmerging specs, so it's cool in fact, and introducing it to our code could be fun, however we would like not to fore our app devs to it. Hopefully, we could some how reduce it or at leas encapsulate into a Web Component</li>
+      </ul>
+  </template>
+
+  <script>
+function wtf(){
+    debugger;
+    this.value = !this.value}
+  var myData = {
+      deeper: {
+        text: 'Works two-way, on key-stroke',
+        child: {
+            style: 'text-warning'
+        },
+        array: [
+            {
+              name: 'button click',
+              value: false
+            },
+            {
+              name: 'button counter',
+              value: 0
+            },
+            {
+              name: 'array manipulation',
+              nestedArray: [
+                {name:'one'},
+                {name:'two'},
+                {name:'three'}
+              ]
+            }
+        ],
+        scopes: {
+            showme: true,
+            conditional:{
+                data: "This markup will be stamped only if `showme` is set to `true`"
+            }
+        },
+        safeHTML: 'Some <strong>HTML</strong> <code>code</code>'
+
+    }
+};
+</script>
+
+  <script src="jspm_packages/system.src.js"></script>
+  <script src="config.js"></script>
+  <script>
+    // System.import("src/aurelia-templating-resources");
+    System.import('aurelia-template');
+  </script>
+</body>
+
+</html>
